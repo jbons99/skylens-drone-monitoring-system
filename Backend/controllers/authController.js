@@ -1,8 +1,8 @@
-import {User, User} from "../models/user.model";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+    import User from "../models/user.model.js";
+    import bcrypt from "bcryptjs";
+    import jwt from "jsonwebtoken";
 
-export const register = async(req,res)=>{
+    export const register = async(req,res)=>{
     const{fullname,email,password} = req.body
     try {
         if(!fullname || !password || !email ){
@@ -43,8 +43,10 @@ export const register = async(req,res)=>{
 
         console.log("user is wrong")
     }
+    }
 
-     const login = async(req,res)=>{
+
+     export const login = async(req,res)=>{
         const {email,password} = req.body
         try {
             if(!email|| !password){
@@ -76,19 +78,52 @@ export const register = async(req,res)=>{
                     success:false
 
                 })
+            };
+
+
+            
+            const tokenData={
+                userId: User._id
             }
+
+            const token= await jwt.sign(tokenData,process.env.SECRET_KEY,{expiresIn:"1D"});
+            return res.status(200).cookie("token",token,{maxAge:1*24*60*60*1000,httpOnly:true,sameSite:'strict'}).json({
+                message:`welcome Back ${user.fullName}`,
+                user:{
+                 _id:User._id,
+                 fullName:User.fullName,
+                 email:User.email
+
+                },
+                success: true
+
+
+            })
 
         } catch (error) {
             console.log(error)
-        }
 
-
-
+            return res.status(500).json({
+                message:error.message,
+                success:false
+        });   
     }
-
-
+     }
     
+    //
+   export const logout =async (req,res)=>{
 
-
-
-}
+        try {
+            return res (200).cookie
+            ("token","",{masAge:0}).json({
+                message:`${User.fullName} looges out`,
+                success: true
+            })
+        } catch (error) {
+            console.log(error)
+            return res(400).json({
+                message:error.message,
+                success:false
+            })
+        }
+   }
