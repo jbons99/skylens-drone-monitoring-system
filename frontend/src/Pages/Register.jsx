@@ -27,33 +27,36 @@ function Register() {
       return;
     }
 
-    alert("Register form submitted");
     console.log("Register data:", formData);
+    alert("Create account clicked");
   }
 
   return (
     <div className="auth-page">
+      <div className="auth-bg"></div>
+      <div className="auth-grid"></div>
+
       <AuthCard
-        title="Register"
-        subtitle="Create your SkyLens account"
+        title="Create account"
+        subtitle="Join the SkyLens monitoring network"
       >
         <form onSubmit={handleSubmit}>
           <InputField
-            label="Full Name"
+            label="Full name"
             name="name"
             value={formData.name}
             onChange={handleChange}
-            placeholder="Enter your name"
+            placeholder="Your full name"
             required
           />
 
           <InputField
-            label="Email"
+            label="Email address"
             type="email"
             name="email"
             value={formData.email}
             onChange={handleChange}
-            placeholder="Enter your email"
+            placeholder="operator@skylens.io"
             required
           />
 
@@ -63,25 +66,25 @@ function Register() {
             name="password"
             value={formData.password}
             onChange={handleChange}
-            placeholder="Create a password"
+            placeholder="Create a strong password"
             required
           />
 
           <InputField
-            label="Confirm Password"
+            label="Confirm password"
             type="password"
             name="confirmPassword"
             value={formData.confirmPassword}
             onChange={handleChange}
-            placeholder="Confirm your password"
+            placeholder="Repeat your password"
             required
           />
 
-          <Button text="Register" type="submit" />
+          <Button text="CREATE ACCOUNT →" type="submit" />
         </form>
 
-        <p className="auth-link-text">
-          Already have an account? <Link to="/login">Login</Link>
+        <p className="auth-footer">
+          Already have an account? <Link to="/login">Sign in</Link>
         </p>
       </AuthCard>
     </div>
