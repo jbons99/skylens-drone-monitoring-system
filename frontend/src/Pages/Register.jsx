@@ -27,20 +27,24 @@ function Register() {
       return;
     }
 
-    alert("Register works");
-    console.log(formData);
+    alert("Register form submitted");
+    console.log("Register data:", formData);
   }
 
   return (
-    <div>
-      <AuthCard title="Register" subtitle="Create your SkyLens account">
+    <div className="auth-page">
+      <AuthCard
+        title="Register"
+        subtitle="Create your SkyLens account"
+      >
         <form onSubmit={handleSubmit}>
           <InputField
             label="Full Name"
             name="name"
             value={formData.name}
             onChange={handleChange}
-            placeholder="Enter name"
+            placeholder="Enter your name"
+            required
           />
 
           <InputField
@@ -49,7 +53,8 @@ function Register() {
             name="email"
             value={formData.email}
             onChange={handleChange}
-            placeholder="Enter email"
+            placeholder="Enter your email"
+            required
           />
 
           <InputField
@@ -58,7 +63,8 @@ function Register() {
             name="password"
             value={formData.password}
             onChange={handleChange}
-            placeholder="Enter password"
+            placeholder="Create a password"
+            required
           />
 
           <InputField
@@ -67,13 +73,14 @@ function Register() {
             name="confirmPassword"
             value={formData.confirmPassword}
             onChange={handleChange}
-            placeholder="Confirm password"
+            placeholder="Confirm your password"
+            required
           />
 
           <Button text="Register" type="submit" />
         </form>
 
-        <p>
+        <p className="auth-link-text">
           Already have an account? <Link to="/login">Login</Link>
         </p>
       </AuthCard>

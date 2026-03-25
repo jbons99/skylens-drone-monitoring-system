@@ -19,13 +19,16 @@ function Login() {
 
   function handleSubmit(event) {
     event.preventDefault();
-    alert("Login works");
-    console.log(formData);
+    alert("Login form submitted");
+    console.log("Login data:", formData);
   }
 
   return (
-    <div>
-      <AuthCard title="Login" subtitle="Sign in to your SkyLens account">
+    <div className="auth-page">
+      <AuthCard
+        title="Login"
+        subtitle="Sign in to your SkyLens account"
+      >
         <form onSubmit={handleSubmit}>
           <InputField
             label="Email"
@@ -33,7 +36,8 @@ function Login() {
             name="email"
             value={formData.email}
             onChange={handleChange}
-            placeholder="Enter email"
+            placeholder="Enter your email"
+            required
           />
 
           <InputField
@@ -42,13 +46,14 @@ function Login() {
             name="password"
             value={formData.password}
             onChange={handleChange}
-            placeholder="Enter password"
+            placeholder="Enter your password"
+            required
           />
 
           <Button text="Login" type="submit" />
         </form>
 
-        <p>
+        <p className="auth-link-text">
           Don&apos;t have an account? <Link to="/register">Register</Link>
         </p>
       </AuthCard>
