@@ -1,10 +1,12 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import AuthCard from "../components/auth/AuthCard.jsx";
 import InputField from "../components/common/InputField.jsx";
 import Button from "../components/common/Button.jsx";
 
 function Login() {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -20,7 +22,7 @@ function Login() {
   function handleSubmit(event) {
     event.preventDefault();
     console.log("Login data:", formData);
-    alert("Sign in clicked");
+    navigate("/dashboard");
   }
 
   return (
