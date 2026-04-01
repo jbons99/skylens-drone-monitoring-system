@@ -1,11 +1,19 @@
+import React, { useState } from "react";
+import Login from "./Pages/Login.jsx";
+import Register from "./Pages/Register.jsx";
+
 function App() {
+  const [page, setPage] = useState("login");
+
   return (
-    <div className="p-10">
-      <h1 className="text-4xl font-bold text-blue-500">
-        SkyLens Dashboard
-      </h1>
-    </div>
-  )
+    <>
+      {page === "login" ? (
+        <Login goToRegister={() => setPage("register")} />
+      ) : (
+        <Register goToLogin={() => setPage("login")} />
+      )}
+    </>
+  );
 }
 
-export default App
+export default App;
