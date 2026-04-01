@@ -1,6 +1,3 @@
-HELLO JORDAN 
-HELLO PARTH 
-ALL THE FUCKING BEST !!!
 
 
 here is an overview of what you'll be doing
