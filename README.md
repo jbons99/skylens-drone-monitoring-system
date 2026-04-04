@@ -1,10 +1,5 @@
 
 
-here is an overview of what you'll be doing
-
-
-make sure you don't push into the main code or it will mess up with our infrastructure please create a clone of the repo and work on  it and make sure to confirm with me before you push and whenever you guys push , push it in a branch DO NOT push in the main repo
-Thank you 
 # SkyLens
 
 ## Drone-Based People and Vehicle Monitoring Platform
