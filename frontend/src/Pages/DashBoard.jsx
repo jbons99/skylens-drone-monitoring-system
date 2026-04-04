@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-
-=======
 import { Link } from "react-router-dom";
 import PageLayout from "../components/layout/PageLayout.jsx";
 import StatCard from "../components/dashboard/StatCard.jsx";
@@ -161,4 +158,3 @@ function Dashboard() {
 }
 
 export default Dashboard;
->>>>>>> jordan-frontend
