@@ -1,115 +1,137 @@
-<<<<<<< HEAD
-
-=======
 import { useState } from "react";
 import PageLayout from "../components/layout/PageLayout.jsx";
-import Button from "../components/common/Button.jsx";
+import api from "../Services/api.js";
 
 function Upload() {
   const [selectedFile, setSelectedFile] = useState(null);
-  const [location, setLocation] = useState("");
+  const [missionName, setMissionName] = useState("");
   const [notes, setNotes] = useState("");
+  const [statusMessage, setStatusMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  function handleFileChange(event) {
-    setSelectedFile(event.target.files[0] || null);
-  }
+  const handleFileChange = (event) => {
+    const file = event.target.files?.[0] || null;
+    setSelectedFile(file);
+    setStatusMessage("");
+  };
 
-  function handleSubmit(event) {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     if (!selectedFile) {
-      alert("Please select an image");
+      setStatusMessage("Select an image before starting analysis.");
       return;
     }
 
-    console.log({
-      file: selectedFile.name,
-      location,
-      notes,
-    });
+    setIsSubmitting(true);
 
-    alert("Submitted for detection");
-  }
+    try {
+      const formData = new FormData();
+      formData.append("image", selectedFile);
+      formData.append("missionName", missionName);
+      formData.append("notes", notes);
+
+      const response = await api.post("/detection/upload", formData);
+      setStatusMessage(response.data.message || "Upload completed.");
+      setSelectedFile(null);
+      setMissionName("");
+      setNotes("");
+    } catch (error) {
+      setStatusMessage(
+        error.response?.data?.message || "Upload failed. Check backend auth.",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <PageLayout>
       <div className="page-header">
         <div>
-          <h1 className="page-title">New Detection Upload</h1>
+          <h1 className="page-title">Upload Mission Imagery</h1>
           <div className="page-meta">
-            Submit a drone image for YOLO object detection
+            Add a file, attach mission context, and send it into the review
+            pipeline.
           </div>
         </div>
       </div>
 
       <div className="upload-grid">
-        <div>
-          <label className="drop-zone" htmlFor="upload-image">
-            <div className="drop-icon">🖼️</div>
-            <div className="drop-title">Drop image here</div>
+        <div className="card">
+          <label className="drop-zone" htmlFor="mission-upload">
+            <div className="drop-icon">DL</div>
+            <div className="drop-title">Drop a drone image here</div>
             <div className="drop-sub">
-              or click to browse your device
-              <br />
-              Supports aerial and drone imagery
+              You can also browse from your computer and keep the rest of the
+              frontend flow working while backend upload logic is still being
+              connected.
             </div>
 
             <div className="drop-formats">
               <span className="format-tag">JPG</span>
               <span className="format-tag">PNG</span>
               <span className="format-tag">WEBP</span>
-              <span className="format-tag">TIFF</span>
             </div>
           </label>
 
           <input
-            id="upload-image"
-            className="hidden-file-input"
+            id="mission-upload"
             type="file"
             accept="image/*"
+            className="hidden-file-input"
             onChange={handleFileChange}
           />
 
           {selectedFile && (
             <div className="upload-meta">
-              📎 <span>{selectedFile.name}</span>
+              Selected: {selectedFile.name} ({Math.ceil(selectedFile.size / 1024)}{" "}
+              KB)
             </div>
           )}
         </div>
 
-        <form className="upload-form" onSubmit={handleSubmit}>
-          <div>
-            <label className="field-label" htmlFor="location">
-              Location / Site
-            </label>
-            <input
-              id="location"
-              className="field-input"
-              type="text"
-              placeholder="e.g. Collaroy Beach, NSW"
-              value={location}
-              onChange={(event) => setLocation(event.target.value)}
-            />
-          </div>
+        <div className="card">
+          <div className="card-title">Mission Details</div>
 
-          <div>
-            <label className="field-label" htmlFor="notes">
-              Notes
-            </label>
-            <textarea
-              id="notes"
-              className="textarea-input"
-              placeholder="Add context about this capture — weather, time of day, purpose..."
-              value={notes}
-              onChange={(event) => setNotes(event.target.value)}
-            />
-          </div>
+          <form className="upload-form" onSubmit={handleSubmit}>
+            <div className="field-group">
+              <label className="field-label" htmlFor="mission-name">
+                Mission Name
+              </label>
+              <input
+                id="mission-name"
+                type="text"
+                className="field-input"
+                placeholder="Beach patrol scan"
+                value={missionName}
+                onChange={(event) => setMissionName(event.target.value)}
+              />
+            </div>
 
-          <Button text="SUBMIT FOR DETECTION →" type="submit" />
-        </form>
+            <div className="field-group">
+              <label className="field-label" htmlFor="mission-notes">
+                Notes
+              </label>
+              <textarea
+                id="mission-notes"
+                className="textarea-input"
+                placeholder="Add context for the image, location, or expected detections."
+                value={notes}
+                onChange={(event) => setNotes(event.target.value)}
+              />
+            </div>
+
+            <button type="submit" className="btn-primary" disabled={isSubmitting}>
+              {isSubmitting ? "Uploading..." : "Start Analysis"}
+            </button>
+          </form>
+
+          {statusMessage && <div className="upload-meta">{statusMessage}</div>}
+        </div>
       </div>
     </PageLayout>
   );
 }
 
 export default Upload;
->>>>>>> jordan-frontend

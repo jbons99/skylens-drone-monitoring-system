@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import PageLayout from "../components/layout/PageLayout.jsx";
-import StatCard from "../components/dashboard/StatCard.jsx";
+import PageLayout from "../layout/PageLayout.jsx";
+import useAuth from "../../hooks/useAuth.js";
 
 const chartData = [
   { people: 30, vehicles: 6 },
@@ -30,7 +30,10 @@ const recentDetections = [
 ];
 
 function Dashboard() {
+  const { user } = useAuth();
   const maxPeople = Math.max(...chartData.map((item) => item.people));
+  const totalPeople = chartData.reduce((sum, item) => sum + item.people, 0);
+  const totalVehicles = chartData.reduce((sum, item) => sum + item.vehicles, 0);
 
   return (
     <PageLayout>
@@ -38,7 +41,8 @@ function Dashboard() {
         <div>
           <h1 className="page-title">Monitoring Overview</h1>
           <div className="page-meta">
-            Last updated: 25 Mar 2026 · 11:02 PM AEST
+            {user?.company || "SkyLens Operations"} · Last updated: 25 Mar 2026
+            · 11:02 PM AEST
           </div>
         </div>
 
@@ -49,27 +53,26 @@ function Dashboard() {
       </div>
 
       <div className="stats-grid">
-        <StatCard
-          tone="blue"
-          icon="📁"
-          title="Total Uploads"
-          value="12"
-          change="↑ +3 this week"
-        />
-        <StatCard
-          tone="purple"
-          icon="👤"
-          title="People Detected"
-          value="187"
-          change="↑ +42 this week"
-        />
-        <StatCard
-          tone="green"
-          icon="🚗"
-          title="Vehicles Detected"
-          value="54"
-          change="↑ +8 this week"
-        />
+        <div className="stat-card blue">
+          <div className="stat-icon blue">P</div>
+          <div className="stat-label">People Detected</div>
+          <div className="stat-value">{totalPeople}</div>
+          <div className="stat-change">+12% from last week</div>
+        </div>
+
+        <div className="stat-card purple">
+          <div className="stat-icon purple">V</div>
+          <div className="stat-label">Vehicles Detected</div>
+          <div className="stat-value">{totalVehicles}</div>
+          <div className="stat-change">+8% from last week</div>
+        </div>
+
+        <div className="stat-card green">
+          <div className="stat-icon green">M</div>
+          <div className="stat-label">Mission Status</div>
+          <div className="stat-value">24</div>
+          <div className="stat-change">All active regions healthy</div>
+        </div>
       </div>
 
       <div className="grid-2">
@@ -78,7 +81,7 @@ function Dashboard() {
 
           <div className="quick-links">
             <Link to="/upload" className="quick-link-item">
-              <div className="quick-link-icon upload">📤</div>
+              <div className="quick-link-icon upload">UP</div>
               <div>
                 <div className="quick-link-label">New Upload</div>
                 <div className="quick-link-sub">Process a drone image</div>
@@ -86,7 +89,7 @@ function Dashboard() {
             </Link>
 
             <Link to="/history" className="quick-link-item">
-              <div className="quick-link-icon history">📋</div>
+              <div className="quick-link-icon history">HS</div>
               <div>
                 <div className="quick-link-label">Detection History</div>
                 <div className="quick-link-sub">Browse past results</div>
@@ -119,8 +122,8 @@ function Dashboard() {
           </div>
 
           <div className="chart-legend">
-            <span className="legend-people">■ People</span>
-            <span className="legend-vehicles">■ Vehicles</span>
+            <span className="legend-people">People</span>
+            <span className="legend-vehicles">Vehicles</span>
           </div>
         </div>
       </div>

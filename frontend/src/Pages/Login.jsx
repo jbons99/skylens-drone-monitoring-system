@@ -1,12 +1,13 @@
 import React, { useState } from "react";
-import AuthButton from "./components/AuthButton.jsx";
-import AuthInput from "./components/AuthInput.jsx";
-import AuthModal from "./components/AuthModal.jsx";
-import RadarPanel from "./components/RadarPanel.jsx";
+import { Link, useNavigate } from "react-router-dom";
+import AuthButton from "../components/common/AuthButton.jsx";
+import AuthInput from "../components/common/AuthInput.jsx";
+import AuthModal from "../components/common/AuthModal.jsx";
+import RadarPanel from "../components/common/RadarPanel.jsx";
+import { loginUser } from "../Services/authService.js";
 
-
-function Login({ goToRegister }) {
-  const [showRegister, setShowRegister] = useState(false);
+function Login() {
+  const navigate = useNavigate();
   const [showForgot, setShowForgot] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
@@ -14,12 +15,9 @@ function Login({ goToRegister }) {
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [registerName, setRegisterName] = useState("");
-  const [registerEmail, setRegisterEmail] = useState("");
-  const [registerTeam, setRegisterTeam] = useState("");
   const [forgotEmail, setForgotEmail] = useState("");
 
-  const handleLogin = (event) => {
+  const handleLogin = async (event) => {
     event.preventDefault();
 
     if (!email.trim() || !password.trim()) {
@@ -30,9 +28,15 @@ function Login({ goToRegister }) {
     setLoginError("");
     setIsSubmitting(true);
 
-    window.setTimeout(() => {
+    try {
+      await new Promise((resolve) => window.setTimeout(resolve, 500));
+      await loginUser({ email, password, rememberMe });
+      navigate("/dashboard");
+    } catch (error) {
+      setLoginError(error.message);
+    } finally {
       setIsSubmitting(false);
-    }, 1400);
+    }
   };
 
   return (
@@ -179,15 +183,13 @@ function Login({ goToRegister }) {
 
               <p className="mt-6 text-center text-sm text-slate-400 animate-fadeUp [animation-delay:0.95s]">
                 Don&apos;t have an account?{" "}
-                <button
-                  type="button"
+                <Link
+                  to="/register"
                   className="font-medium text-sky-300 transition duration-300 hover:-translate-y-0.5 hover:text-sky-200"
-                  onClick={goToRegister}
                 >
                   Sign up
-                </button>
+                </Link>
               </p>
-
             </div>
           </section>
         </div>
@@ -206,7 +208,14 @@ function Login({ goToRegister }) {
           />
 
           <div className="mt-5">
-            <AuthButton>Send reset link</AuthButton>
+            <AuthButton
+              onClick={() => {
+                setForgotEmail("");
+                setShowForgot(false);
+              }}
+            >
+              Send reset link
+            </AuthButton>
           </div>
         </AuthModal>
       )}

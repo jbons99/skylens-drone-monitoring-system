@@ -1,18 +1,23 @@
 import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import AuthButton from "../components/common/AuthButton.jsx";
+import AuthInput from "../components/common/AuthInput.jsx";
+import RadarPanel from "../components/common/RadarPanel.jsx";
+import { registerUser } from "../Services/authService.js";
 
-function Register({ goToLogin }) {
+function Register() {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [fullName, setFullName] = useState("");
-  const [company, setCompany] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleRegister = (event) => {
+  const handleRegister = async (event) => {
     event.preventDefault();
 
-    if (!fullName.trim() || !company.trim() || !email.trim() || !password.trim()) {
+    if (!fullName.trim() || !email.trim() || !password.trim()) {
       setError("Please fill in all fields.");
       return;
     }
@@ -20,9 +25,15 @@ function Register({ goToLogin }) {
     setError("");
     setIsSubmitting(true);
 
-    window.setTimeout(() => {
+    try {
+      await new Promise((resolve) => window.setTimeout(resolve, 500));
+      await registerUser({ fullName, email, password });
+      navigate("/login");
+    } catch (error) {
+      setError(error.message || "Unable to create account.");
+    } finally {
       setIsSubmitting(false);
-    }, 1400);
+    }
   };
 
   return (
@@ -34,85 +45,7 @@ function Register({ goToLogin }) {
 
       <div className="relative z-10 flex min-h-screen items-center justify-center px-6 py-10">
         <div className="grid w-full max-w-7xl overflow-hidden rounded-[32px] border border-white/10 bg-slate-900/40 shadow-[0_30px_120px_rgba(0,0,0,0.45)] backdrop-blur-2xl lg:grid-cols-[1.1fr_0.9fr]">
-          <section className="border-r border-white/10 bg-gradient-to-br from-sky-500/10 via-transparent to-cyan-400/5 p-8 sm:p-10 lg:p-12">
-            <div className="inline-flex items-center gap-3 rounded-full border border-sky-400/20 bg-sky-400/10 px-4 py-2 text-sm font-medium text-sky-200">
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-sky-400 text-sm font-bold text-slate-950">
-                S
-              </div>
-              SkyLens Founding Team
-            </div>
-
-            <h1 className="mt-8 text-4xl font-semibold leading-tight text-white sm:text-5xl">
-              Built by a team shaping the future of aerial intelligence.
-            </h1>
-
-            <p className="mt-5 max-w-2xl text-base leading-7 text-slate-300">
-              SkyLens is being created by a team that combines product thinking,
-              frontend design, backend engineering, and a shared vision for
-              smarter drone-powered workflows.
-            </p>
-
-            <div className="mt-10 grid gap-4">
-              <div className="rounded-3xl border border-white/10 bg-black/20 p-5">
-                <p className="text-xs uppercase tracking-[0.24em] text-sky-300/80">
-                  Co-Founder 01
-                </p>
-                <h2 className="mt-2 text-2xl font-semibold text-white">
-                  Parth
-                </h2>
-                <p className="mt-1 text-sm font-medium text-sky-200">
-                  Product Vision and Frontend
-                </p>
-                <p className="mt-3 text-sm leading-6 text-slate-400">
-                  Leading the user experience, product direction, design flow,
-                  and how SkyLens feels in real-world use.
-                </p>
-              </div>
-
-              <div className="rounded-3xl border border-white/10 bg-black/20 p-5">
-                <p className="text-xs uppercase tracking-[0.24em] text-sky-300/80">
-                  Co-Founder 02
-                </p>
-                <h2 className="mt-2 text-2xl font-semibold text-white">
-                  Bhavin
-                </h2>
-                <p className="mt-1 text-sm font-medium text-sky-200">
-                  Backend Systems
-                </p>
-                <p className="mt-3 text-sm leading-6 text-slate-400">
-                  Building the backend architecture, APIs, data pipelines, and
-                  authentication systems powering the platform.
-                </p>
-              </div>
-
-              <div className="rounded-3xl border border-white/10 bg-black/20 p-5">
-                <p className="text-xs uppercase tracking-[0.24em] text-sky-300/80">
-                  Co-Founder 03
-                </p>
-                <h2 className="mt-2 text-2xl font-semibold text-white">
-                  Jordan
-                </h2>
-                <p className="mt-1 text-sm font-medium text-sky-200">
-                  Operations and Engineering
-                </p>
-                <p className="mt-3 text-sm leading-6 text-slate-400">
-                  Supporting system design, platform logic, deployment, and the
-                  practical engineering side of making SkyLens production-ready.
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-10 rounded-3xl border border-sky-500/15 bg-sky-500/10 p-5">
-              <p className="text-sm font-medium text-sky-200">
-                What we are building
-              </p>
-              <p className="mt-2 text-sm leading-6 text-slate-300">
-                We want SkyLens to help teams manage flight operations,
-                understand visual data faster, and make drone intelligence more
-                useful in daily work.
-              </p>
-            </div>
-          </section>
+          <RadarPanel />
 
           <section className="p-6 sm:p-10 lg:p-12">
             <div className="mx-auto max-w-md">
@@ -130,65 +63,41 @@ function Register({ goToLogin }) {
               </div>
 
               <form className="space-y-4" onSubmit={handleRegister}>
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-slate-200">
-                    Full name
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="John Carter"
-                    value={fullName}
-                    onChange={(event) => setFullName(event.target.value)}
-                    className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-400 outline-none transition duration-300 focus:border-sky-400/50 focus:bg-white/10 focus:ring-4 focus:ring-sky-400/10"
-                  />
-                </div>
+                <AuthInput
+                  label="Full name"
+                  type="text"
+                  placeholder="Jordan Blake"
+                  value={fullName}
+                  onChange={(event) => setFullName(event.target.value)}
+                />
 
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-slate-200">
-                    Company or team
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="SkyLens Operations"
-                    value={company}
-                    onChange={(event) => setCompany(event.target.value)}
-                    className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-400 outline-none transition duration-300 focus:border-sky-400/50 focus:bg-white/10 focus:ring-4 focus:ring-sky-400/10"
-                  />
-                </div>
-
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-slate-200">
-                    Work email
-                  </label>
-                  <input
-                    type="email"
-                    placeholder="ops@skylens.ai"
-                    value={email}
-                    onChange={(event) => setEmail(event.target.value)}
-                    className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-400 outline-none transition duration-300 focus:border-sky-400/50 focus:bg-white/10 focus:ring-4 focus:ring-sky-400/10"
-                  />
-                </div>
+                <AuthInput
+                  label="Work email"
+                  type="email"
+                  placeholder="ops@skylens.ai"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                />
 
                 <div>
                   <label className="mb-2 block text-sm font-medium text-slate-200">
                     Password
                   </label>
-                  <div className="relative">
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Create a password"
-                      value={password}
-                      onChange={(event) => setPassword(event.target.value)}
-                      className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 pr-20 text-sm text-white placeholder:text-slate-400 outline-none transition duration-300 focus:border-sky-400/50 focus:bg-white/10 focus:ring-4 focus:ring-sky-400/10"
-                    />
-                    <button
-                      type="button"
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-medium text-slate-400 transition hover:text-white"
-                      onClick={() => setShowPassword((value) => !value)}
-                    >
-                      {showPassword ? "Hide" : "Show"}
-                    </button>
-                  </div>
+                  <AuthInput
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Create a password"
+                    value={password}
+                    onChange={(event) => setPassword(event.target.value)}
+                    rightContent={
+                      <button
+                        type="button"
+                        className="text-sm font-medium text-slate-400 transition hover:text-white"
+                        onClick={() => setShowPassword((value) => !value)}
+                      >
+                        {showPassword ? "Hide" : "Show"}
+                      </button>
+                    }
+                  />
                 </div>
 
                 {error && (
@@ -197,24 +106,32 @@ function Register({ goToLogin }) {
                   </div>
                 )}
 
-                <button
+                <AuthButton
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full rounded-2xl bg-sky-400 px-4 py-3.5 font-semibold text-slate-950 transition duration-300 hover:bg-sky-300 disabled:cursor-not-allowed disabled:bg-sky-500/70"
                 >
                   {isSubmitting ? "Creating account..." : "Create account"}
-                </button>
+                </AuthButton>
               </form>
+
+              <div className="mt-8 rounded-3xl border border-sky-500/15 bg-sky-500/10 p-5">
+                <p className="text-sm font-medium text-sky-200">
+                  Quick start
+                </p>
+                <p className="mt-2 text-sm leading-6 text-slate-300">
+                  Your account is created in the backend database, then you can
+                  sign in with the same credentials from the login page.
+                </p>
+              </div>
 
               <p className="mt-6 text-center text-sm text-slate-400">
                 Already have an account?{" "}
-                <button
-                  type="button"
+                <Link
+                  to="/login"
                   className="font-medium text-sky-300 transition hover:text-sky-200"
-                  onClick={goToLogin}
                 >
                   Sign in
-                </button>
+                </Link>
               </p>
             </div>
           </section>

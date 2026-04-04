@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-
-=======
 import { Link } from "react-router-dom";
 
 function NotFound() {
@@ -10,14 +7,14 @@ function NotFound() {
       <div className="auth-grid"></div>
 
       <div className="auth-card auth-card-center">
-        <div className="notfound-icon">🛰️</div>
+        <div className="notfound-icon">SL</div>
         <div className="notfound-code">404</div>
         <div className="notfound-title">Page not found</div>
         <p className="auth-subtitle">
           This sector is outside our drone coverage area.
         </p>
         <Link to="/login" className="notfound-link">
-          RETURN TO BASE →
+          RETURN TO BASE
         </Link>
       </div>
     </div>
@@ -25,4 +22,3 @@ function NotFound() {
 }
 
 export default NotFound;
->>>>>>> jordan-frontend

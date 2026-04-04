@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import PageLayout from "../components/layout/PageLayout.jsx";
+import api from "../Services/api.js";
 
 function History() {
   const [history, setHistory] = useState([]);
@@ -11,73 +13,88 @@ function History() {
 
   const fetchHistory = async () => {
     try {
-      const response = await fetch("http://localhost:5000/history");
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch history");
-      }
-
-      const data = await response.json();
-      setHistory(data);
+      const response = await api.get("/detection/all");
+      setHistory(response.data.detections || []);
     } catch (err) {
-      setError(err.message);
+      setError(err.response?.data?.message || "Failed to fetch history");
     } finally {
       setLoading(false);
     }
   };
 
   if (loading) {
-    return <div>Loading history...</div>;
+    return (
+      <PageLayout>
+        <div className="page-header">
+          <div>
+            <h1 className="page-title">Detection History</h1>
+            <div className="page-meta">Loading records from the backend...</div>
+          </div>
+        </div>
+      </PageLayout>
+    );
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return (
+      <PageLayout>
+        <div className="page-header">
+          <div>
+            <h1 className="page-title">Detection History</h1>
+            <div className="page-meta">Backend connection error</div>
+          </div>
+        </div>
+        <div className="card">Error: {error}</div>
+      </PageLayout>
+    );
   }
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>Detection History</h1>
+    <PageLayout>
+      <div className="page-header">
+        <div>
+          <h1 className="page-title">Detection History</h1>
+          <div className="page-meta">Stored uploads from your backend database</div>
+        </div>
+      </div>
 
       {history.length === 0 ? (
-        <p>No uploads found yet.</p>
+        <div className="card">No uploads found yet.</div>
       ) : (
-        <div>
-          {history.map((item, index) => (
-            <div
-              key={index}
-              style={{
-                border: "1px solid #ccc",
-                borderRadius: "10px",
-                padding: "15px",
-                marginBottom: "20px"
-              }}
-            >
-              <h3>Upload {index + 1}</h3>
-              <p><strong>Total objects:</strong> {item.total_objects}</p>
-
-              <div>
-                <strong>Counts:</strong>
-                <ul>
-                  {Object.entries(item.counts || {}).map(([name, count]) => (
-                    <li key={name}>
-                      {name}: {count}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {item.annotated_image && (
-                <img
-                  src={`http://localhost:5000${item.annotated_image}`}
-                  alt="Annotated result"
-                  style={{ width: "300px", marginTop: "10px", borderRadius: "8px" }}
-                />
-              )}
-            </div>
-          ))}
+        <div className="card">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Mission</th>
+                <th>File</th>
+                <th>People</th>
+                <th>Vehicles</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {history.map((item) => (
+                <tr key={item._id}>
+                  <td className="td-date">
+                    {new Date(item.createdAt).toLocaleDateString()}
+                  </td>
+                  <td className="td-location">{item.missionName || "Untitled"}</td>
+                  <td>{item.originalName}</td>
+                  <td className="td-num td-people">{item.counts?.people ?? 0}</td>
+                  <td className="td-num td-vehicles">
+                    {item.counts?.vehicles ?? 0}
+                  </td>
+                  <td>
+                    <span className="status-chip">{item.status}</span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
-    </div>
+    </PageLayout>
   );
 }
 
